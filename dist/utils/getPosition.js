@@ -167,7 +167,29 @@ exports.default = function (e, target, node, place, effect, offset) {
   };
 };
 
+var _detectBrowser = require('detect-browser');
+
+var _detectBrowser2 = _interopRequireDefault(_detectBrowser);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 // Get current mouse offset
+/**
+ * Calculate the position of tooltip
+ *
+ * @params
+ * - `e` {Event} the event of current mouse
+ * - `target` {Element} the currentTarget of the event
+ * - `node` {DOM} the react-tooltip object
+ * - `place` {String} top / right / bottom / left
+ * - `effect` {String} float / solid
+ * - `offset` {Object} the offset to default position
+ *
+ * @return {Object
+ * - `isNewState` {Bool} required
+ * - `newState` {Object}
+ * - `position` {OBject} {left: {Number}, top: {Number}}
+ */
 var getCurrentOffset = function getCurrentOffset(e, currentTarget, effect) {
   var boundingClientRect = currentTarget.getBoundingClientRect();
   var targetTop = boundingClientRect.top;
@@ -189,22 +211,6 @@ var getCurrentOffset = function getCurrentOffset(e, currentTarget, effect) {
 
 // List all possibility of tooltip final offset
 // This is useful in judging if it is necessary for tooltip to switch position when out of window
-/**
- * Calculate the position of tooltip
- *
- * @params
- * - `e` {Event} the event of current mouse
- * - `target` {Element} the currentTarget of the event
- * - `node` {DOM} the react-tooltip object
- * - `place` {String} top / right / bottom / left
- * - `effect` {String} float / solid
- * - `offset` {Object} the offset to default position
- *
- * @return {Object
- * - `isNewState` {Bool} required
- * - `newState` {Object}
- * - `position` {OBject} {left: {Number}, top: {Number}}
- */
 var getDefaultPosition = function getDefaultPosition(effect, targetWidth, targetHeight, tipWidth, tipHeight) {
   var top = void 0;
   var right = void 0;
@@ -300,8 +306,14 @@ var getParent = function getParent(currentTarget) {
     currentParent = currentParent.parentElement;
   }
 
-  var parentTop = currentParent && currentParent.getBoundingClientRect().top || 0;
-  var parentLeft = currentParent && currentParent.getBoundingClientRect().left || 0;
+  var useBoundingClientRect = true;
+
+  if (_detectBrowser2.default.name === 'ie') {
+    useBoundingClientRect = currentParent && currentParent.style.position !== 'fixed';
+  }
+
+  var parentTop = useBoundingClientRect && currentParent && currentParent.getBoundingClientRect().top || 0;
+  var parentLeft = useBoundingClientRect && currentParent && currentParent.getBoundingClientRect().left || 0;
 
   return { parentTop: parentTop, parentLeft: parentLeft };
 };

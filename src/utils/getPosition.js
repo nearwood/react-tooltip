@@ -14,6 +14,8 @@
  * - `newState` {Object}
  * - `position` {OBject} {left: {Number}, top: {Number}}
  */
+import browser from 'detect-browser'
+
 export default function (e, target, node, place, effect, offset) {
   const tipWidth = node.clientWidth
   const tipHeight = node.clientHeight
@@ -278,8 +280,14 @@ const getParent = (currentTarget) => {
     currentParent = currentParent.parentElement
   }
 
-  const parentTop = currentParent && currentParent.getBoundingClientRect().top || 0
-  const parentLeft = currentParent && currentParent.getBoundingClientRect().left || 0
+  let useBoundingClientRect = true
+
+  if (browser.name === 'ie') {
+    useBoundingClientRect = currentParent && currentParent.style.position !== 'fixed'
+  }
+
+  const parentTop = useBoundingClientRect && currentParent && currentParent.getBoundingClientRect().top || 0
+  const parentLeft = useBoundingClientRect && currentParent && currentParent.getBoundingClientRect().left || 0
 
   return {parentTop, parentLeft}
 }
