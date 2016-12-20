@@ -300,10 +300,8 @@ var getParent = function getParent(currentTarget) {
     currentParent = currentParent.parentElement;
   }
 
-  var useBoundingClientRect = currentParent && currentParent.style.position !== 'fixed';
-
-  var parentTop = useBoundingClientRect && currentParent.getBoundingClientRect().top || 0;
-  var parentLeft = useBoundingClientRect && currentParent.getBoundingClientRect().left || 0;
+  var parentTop = currentParent && currentParent.getBoundingClientRect().top || 0;
+  var parentLeft = currentParent && currentParent.getBoundingClientRect().left || 0;
 
   return { parentTop: parentTop, parentLeft: parentLeft };
 };
